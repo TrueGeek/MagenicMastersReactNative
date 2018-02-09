@@ -5,9 +5,7 @@ import { StackNavigator, NavigationActions } from 'react-navigation';
 export class SplashScreen extends React.Component {
 
   static navigationOptions = {
-    header: {
-      visible: false,
-    }
+    header: null,
   }
 
   constructor(props) {

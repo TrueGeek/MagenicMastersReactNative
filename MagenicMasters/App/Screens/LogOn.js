@@ -10,7 +10,8 @@ import {
   TextInput, 
   Button, 
   TouchableOpacity,
-  AsyncStorage } from 'react-native';
+  AsyncStorage,
+  } from 'react-native';
 import { StackNavigator, NavigationActions } from 'react-navigation';
 
 const { width, height } = Dimensions.get("window");
@@ -18,16 +19,16 @@ const { width, height } = Dimensions.get("window");
 const background = require("../Assets/Images/atlanta_background.jpg");
 const logo = require("../Assets/Images/magenic.png");
 
-//const background = require("./login1_bg.png");
-const mark = require("../Assets/Images/login1_mark.png");
 const lockIcon = require("../Assets/Images/login1_lock.png");
 const personIcon = require("../Assets/Images/login1_person.png");
 
 export class LogOnScreen extends React.Component {
 
   static navigationOptions = {
-    title: 'React Native Sample App',
+    header: null,
   };
+
+  userName = '';
 
   constructor(props) {
     super(props);
@@ -36,13 +37,25 @@ export class LogOnScreen extends React.Component {
 
   logOn() {
     
-    authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ';
-
-    AsyncStorage.setItem('authtoken', authToken, () => {
+    if (this.state === null || this.state.userName === null || this.state.userName === '') {
       
-      this.navigateWithReset('Home', { userName: 'Fred' })
+      alert('Please enter your name');
 
-    });    
+    } else {
+
+      authToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ';
+
+      AsyncStorage.setItem('authtoken', authToken, () => {
+
+        AsyncStorage.setItem('username', this.state.userName, () => {
+
+          this.navigateWithReset('Home', { userName: this.state.userName })
+
+        });        
+  
+      });
+
+    }    
 
   };
 
@@ -62,81 +75,84 @@ export class LogOnScreen extends React.Component {
   render() {
 
     return (
-      <View style={styles.container}>
-        <ImageBackground source={background} style={styles.background} resizeMode="cover">
-          <View style={styles.markWrap}>
-            <Image source={mark} style={styles.mark} resizeMode="contain" />
-          </View>
+      
+      <ImageBackground source={background} style={styles.background} resizeMode="cover">
+
+        <View style={styles.container}>
+
+          <View style={[styles.wrapper, styles.logoWrapper]}>
+            <Image source={logo} style={styles.logo} resizeMode='contain' />
+          </View>          
+
           <View style={styles.wrapper}>
             <View style={styles.inputWrap}>
               <View style={styles.iconWrap}>
                 <Image source={personIcon} style={styles.icon} resizeMode="contain" />
               </View>
               <TextInput 
-                placeholder="Username" 
+                placeholder="Your Name" 
                 placeholderTextColor="#FFF"
+                color="#FFF"
+                onChangeText={(userName) => this.setState({userName})}
                 style={styles.input} 
               />
             </View>
+
             <View style={styles.inputWrap}>
               <View style={styles.iconWrap}>
                 <Image source={lockIcon} style={styles.icon} resizeMode="contain" />
               </View>
               <TextInput 
                 placeholderTextColor="#FFF"
+                color="#FFF"
                 placeholder="Password" 
                 style={styles.input} 
+                onChangeText={(password) => this.setState({password})}
                 secureTextEntry 
               />
             </View>
-            <TouchableOpacity activeOpacity={.5}>
-              <View>
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={.5} onPress={this.logOn}>
+
+            <TouchableOpacity style={styles.buttonwrapper} activeOpacity={.5} onPress={this.logOn}>
               <View style={styles.button}>
                 <Text style={styles.buttonText}>Sign In</Text>
               </View>
             </TouchableOpacity>
-          </View>
-          <View style={styles.container}>
-            <View style={styles.signupWrap}>
-              <Text style={styles.accountText}>Don't have an account?</Text>
-              <TouchableOpacity activeOpacity={.5}>
-                <View>
-                  <Text style={styles.signupLinkText}>Sign Up</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </ImageBackground>
 
-      </View>
+          </View>
+
+        </View>
+
+      </ImageBackground>      
+
     );
   }
 }
 
 const styles = StyleSheet.create({
+  
   container: {
     flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
-  markWrap: {
-    flex: 1,
-    paddingVertical: 30,
-  },
-  mark: {
-    width: null,
-    height: null,
-    flex: 1,
-  },
+
   background: {
     width,
     height,
+  },  
+
+  logoWrapper: {
+    paddingHorizontal: 20,
   },
+
+  logo: {
+    width: null,
+  },  
+
   wrapper: {
     paddingVertical: 30,
   },
+
   inputWrap: {
     flexDirection: "row",
     marginVertical: 10,
@@ -144,19 +160,27 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#CCC"
   },
+
   iconWrap: {
     paddingHorizontal: 7,
     alignItems: "center",
     justifyContent: "center",
   },
+
   icon: {
     height: 20,
     width: 20,
   },
+
   input: {
     flex: 1,
     paddingHorizontal: 10,
   },
+
+  buttonwrapper: {
+    paddingHorizontal: 5,
+  },
+
   button: {
     backgroundColor: "#587058",
     paddingVertical: 20,
@@ -164,27 +188,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 30,
   },
+
   buttonText: {
     color: "#FFF",
     fontSize: 18,
   },
-  forgotPasswordText: {
-    color: "#D8D8D8",
-    backgroundColor: "transparent",
-    textAlign: "right",
-    paddingRight: 15,
-  },
-  signupWrap: {
-    backgroundColor: "transparent",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+
   accountText: {
     color: "#D8D8D8"
   },
-  signupLinkText: {
-    color: "#FFF",
-    marginLeft: 5,
-  }
+
 });

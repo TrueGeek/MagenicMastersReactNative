@@ -14,6 +14,17 @@ export class HomeScreen extends React.Component {
     title: 'Home',
   };
 
+  async componentDidMount () {
+    
+    // for debugging - this is probably not the right way to do this
+    //                 but it keeps the tab on the right spot when
+    //                 the debug refresh happens
+    // setTimeout(() => {
+    //   this.props.navigation.navigate('Account');
+    // });    
+
+  }
+
   render() {
 
     const { params } = this.props.navigation.state;
@@ -48,7 +59,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
   welcome: {
     fontSize: 20,
